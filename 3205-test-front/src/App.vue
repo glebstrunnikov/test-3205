@@ -1,5 +1,3 @@
-
-
 <template>
   <div class="main-container">
     <h1>Email search</h1>
@@ -108,29 +106,27 @@ function validate() {
 }
 
 async function fireQuery() {
-  console.log("validating");
   if (validate()) {
     displayLoading.value = true;
-    console.log("validation passed");
     searchResult.value = null;
     const timestamp = Date.now();
-    console.log("sending request");
-    const response = await fetch(
-      `${URL}/search?email=${inputEmail.value}&number=${inputNumber.value}&timestamp=${timestamp}`
-    );
-    // Таймстемп выполняет две функции: 1) используется как идентификатор запроса на бэке, чтобы ответ приходил только на последний из отправленных 2) предотвращает поведение fetch, который повторяет запрос после получения ответа, если фронт отправил несколько абсолютно одинаковых запросов
-    const resData = await response.json();
-    console.log(resData);
-    searchResult.value = resData;
-    displayLoading.value = false;
+    try {
+      const response = await fetch(
+        `${URL}/search?email=${inputEmail.value}&number=${inputNumber.value}&timestamp=${timestamp}`
+      );
+      // Таймстемп выполняет две функции: 1) используется как идентификатор запроса на бэке, чтобы ответ приходил только на последний из отправленных 2) предотвращает поведение fetch, который повторяет запрос после получения ответа, если фронт отправил несколько абсолютно одинаковых запросов
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}`);
+      }
+      const resData = await response.json();
+      searchResult.value = resData;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      displayLoading.value = false;
+    }
   }
 }
-
-// + 1. Переделать кнопку в форму
-// + 2. Убрать дублирование таймстемпов на бэке
-// 3. Добавить картинку загрузки
-// 4. Навести красоту
-// 5. Написать комментов
 </script>
 
 <style scoped lang="sass">
@@ -174,5 +170,3 @@ label
   max-width: 60px
   margin: 24px
 </style>
-
-
