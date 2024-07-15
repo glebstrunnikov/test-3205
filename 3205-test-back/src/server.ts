@@ -12,7 +12,6 @@ const server = express();
 server.use(cors());
 
 server.get("/search", (req: Request, res: Response) => {
-  console.log("privet");
   const queryEmail = req.query.email as string;
   const queryNumber = req.query.number as string | undefined;
   const queryTimestamp = req.query.timestamp as string;
